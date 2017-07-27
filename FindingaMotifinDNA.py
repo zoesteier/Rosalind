@@ -8,7 +8,7 @@ Created on Mon Jul 24 10:28:01 2017
 # Rosalind Finding a Motif in DNA
 
 # Given: Two DNA strings ss and tt (each of length at most 1 kbp).
-# Return: All locations of tt as a substring of ss.
+# Return: All locations of tt as a substring of s.  (1-based numbering)
 
 # Sample dataset
 # GATATATGCATATACTT
@@ -17,37 +17,39 @@ Created on Mon Jul 24 10:28:01 2017
 #sampleoutput
 # 2 4 10
 
-# Get RNA string from input file
-#RNA = 'TranslatingRNAtoProteinSample.txt'
-RNA = 'TranslatingRNAtoProtein.txt'
-f = open(RNA, 'r')
-s = f.read()
+# Get DNA strings from input file
+#dataset = 'FindingaMotifinDNASample.txt'
+dataset = 'FindingaMotifinDNA.txt'
+f = open(dataset)
+s = f.readline().strip() # the longer string
+t = f.readline().strip() # the shorter string
 f.close()
 
-# Make a dictionary to store the genetic code
-RNAproteincode = 'GeneticCode.txt' # contains codons and corresponding AA
-f = open(RNAproteincode, 'r')
-AAlist = (f.read().split()) # makes a list of codon, AA
-codedict = {} # key is codon, value is AA
-count = 1 # count odd (codon) or even (AA)
-for elem in range(len(AAlist)):
-    if elem % 2 == 1: # if odd, it's an AA, codon is previous
-        codedict[AAlist[elem-1]] = AAlist[elem]
-f.close()
+# Make string of indices where t occurs in s
+indlist = [] # list to store locations of motif
+last = 0 # initialize the location of the previously found index to 0
+start = -1 # location to start searching
+# if find returns -1, there is no found index
+while last >= 0:
+    last = s.find(t, start+1)
+    start = last
+    if last >= 0:
+        indlist.append(last)
 
-# Translate RNA to protein
-def translateRNAprotein(RNAseq):
-    '''Input RNA sequence as a string. Output protein AA sequence as string.'''
-    p = ''
-    # Read 3 bases at a time. Look up AA in dictionary.
-    for codonnum in range(0, len(RNAseq), 3):
-        codon = RNAseq[codonnum:(codonnum + 3)]
-        AA = codedict[codon]
-        if AA == 'Stop':
-            return(p)
-        p += AA
-    return(p)
-    
-# Return protein string p
-p = translateRNAprotein(s)
-print(p)
+# add 1 to all indices to match the solution
+# convert list to a string output
+motif = '' # string to store locations of the motif
+for index in indlist:
+    index += 1 # add 1 to each index
+    if motif != '':
+        motif += ' '
+    motif += str(index)
+        
+# Return string of indices
+print(motif)
+
+## test if gives correct sample output
+#if motif == '2 4 10':
+#    print('correct')
+#else:
+#    print('incorrect')
