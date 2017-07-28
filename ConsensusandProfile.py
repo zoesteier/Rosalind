@@ -37,10 +37,6 @@ Created on Mon Jul 24 10:28:01 2017
 
 import numpy as np
 
-# Get DNA strings from input file
-#fasta = 'ConsensusandProfileSample.fa'
-fasta = 'ConsensusandProfile.fa'
-
 def readfasta(filename):
     '''Read sequences from a fasta file. Output list of sequence strings and list of corresponding IDs.'''
     sequences = []
@@ -63,8 +59,7 @@ def readfasta(filename):
 # generate the profile
 def makeprofile(sequences):
     '''Make a profile (nparray) from a list of DNA strings.'''
-    profile = np.zeros((4, len(sequences[0])))
-    
+    profile = np.zeros((4, len(sequences[0])))   
     for seqnum in range(len(sequences)):
         for basenum in range(len(sequences[0])):
             if sequences[seqnum][basenum] == 'A':
@@ -81,16 +76,15 @@ def makeprofile(sequences):
 # convert the profile into a readable format
 def printprofile(profile):
     'Input a DNA profile (nparray) and output the properly printed matrix.'''
-
-    a = 'A: ' + np.array_str(profile[0,:]).strip('[]')
-    c = 'C: ' + np.array_str(profile[1,:]).strip('[]')
-    g = 'G: ' + np.array_str(profile[2,:]).strip('[]')
-    t = 'T: ' + np.array_str(profile[3,:]).strip('[]')
-    print(a)
-    print(c)
-    print(g)
-    print(t)
-    return
+    # initiate strings for all four bases
+    bases = ['A: ', 'C: ', 'G: ', 'T: ']  
+    for prof in range(len(bases)):
+        for e in profile[prof]:
+            if len(bases[prof]) != 3:
+                bases[prof] += ' '
+            bases[prof] += str(e)
+        print(bases[prof])
+    return(bases)
 
 def makeconsensus(profile):
     '''Input a DNA profile (nparray) and output a consensus sequence string.'''
@@ -101,14 +95,17 @@ def makeconsensus(profile):
         consensus += basedict[base]                
     return(consensus)
     
+# Get DNA strings from input file
+#fasta = 'ConsensusandProfileSample.fa'
+fasta = 'ConsensusandProfile.fa'
     
 # read the fasta file
 sequences, IDs = readfasta(fasta)
 # generate the profile
 profile = makeprofile(sequences)
 ## generate consensus from the profile
-#consensus = makeconsensus(profile)
+consensus = makeconsensus(profile)
 ## print the consensus
-#print(consensus)
+print(consensus)
 ## print the profile
-printprofile(profile)
+stringprofile = printprofile(profile)
