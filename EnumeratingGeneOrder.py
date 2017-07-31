@@ -35,5 +35,10 @@ permlist = list(itertools.permutations(xlist))
 
 # print the list of permutations
 for i in permlist:
-    perm = str(i).strip('(),')
-    print(perm)
+#    perm = str(i).strip('(),')
+#    print(perm)
+    permstr = str(i[0])
+    for item in range(1,len(i)):
+        permstr += ' '
+        permstr += str(i[item])
+    print(permstr)
