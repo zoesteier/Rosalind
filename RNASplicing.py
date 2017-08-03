@@ -44,6 +44,7 @@ def readfasta(filename):
 sample = 'RNASplicingSample.fa'
 s = sample
 s = 'RNASplicing.fa'
+s = 'RNASplicing3.fa'
 
 # read sequences from fasta
 seqs, IDs = readfasta(s)
@@ -57,18 +58,18 @@ for intron in range(1, len(seqs)):
     index = fullseq.index(seqs[intron]) # location of intron within full sequence
     intronlocs.append(index)
     
-# splice out introns
-intronlocs.sort() # sort the introns in order
-splicedseq = ''
-exonstart = 0
-for intron in range(len(intronlocs)):
-    index = intronlocs[intron] # location of the start of an intron
-    splicedseq += fullseq[exonstart:index] # add the previous exon to the spliced sequence
-    exonstart = index + len(seqs[intron + 1]) # next exon starts at end of intron
-    print(exonstart)
-splicedseq += fullseq[exonstart:] # add the final exon
+# splice out introns: this did not work correctly
+#intronlocs.sort() # sort the introns in order
+#splicedseq = ''
+#exonstart = 0
+#for intron in range(len(intronlocs)):
+#    index = intronlocs[intron] # location of the start of an intron
+#    splicedseq += fullseq[exonstart:index] # add the previous exon to the spliced sequence
+#    exonstart = index + len(seqs[intron + 1]) # next exon starts at end of intron
+#    #print(exonstart)
+#splicedseq += fullseq[exonstart:] # add the final exon
 #print(len(fullseq))
-print(intronlocs)
+#print(intronlocs)
 #print(splicedseq)
 #print(len(splicedseq))
 
@@ -92,18 +93,20 @@ def translateRNAprotein(RNAseq):
     for codonnum in range(0, len(RNAseq), 3):
         codon = RNAseq[codonnum:(codonnum + 3)]
         AA = codedict[codon]
+#        print(codon)
+#        print(AA)
         if AA == 'Stop':
-            print('got stop')
+            #print('got stop')
             return(p)
         p += AA
     return(p)    
 
 
 # transcribe DNA to RNA
-rna = splicedseq.replace('T', 'U')
+#rna = splicedseq.replace('T', 'U')
 # find the protein sequence
-p = translateRNAprotein(rna)
-print(p)
+#p = translateRNAprotein(rna)
+#print(p)
 
 ## try importing function from file
 #import TranslatingRNAtoProtein as translate
@@ -111,16 +114,25 @@ print(p)
 #print('this is the test')
 #print(pimporttest)
 
-# debug code
-final = 0
-for i in range(len(seqs)):
-    print(len(seqs[i]))
-    if i == 0:
-        final += len(seqs[i])
-    else:
-        final -= len(seqs[i])
-print('correct protein length')
-print(final/3)
+## try another method to remove introns
+intronlist = seqs[1:]
+splc = fullseq[:]
+for intron in intronlist:
+    splc = splc.replace(intron, '')
+splcrna = splc.replace('T', 'U')
+protein = translateRNAprotein(splcrna)
+print(protein)
 
-if p == sampleout:
-    print('Sample is correct')
+# debug code
+#final = 0
+#for i in range(len(seqs)):
+#    #print(len(seqs[i]))
+#    if i == 0:
+#        final += len(seqs[i])
+#    else:
+#        final -= len(seqs[i])
+#print('correct protein length')
+#print(final/3)
+
+#if p == sampleout:
+#    print('Sample is correct')
